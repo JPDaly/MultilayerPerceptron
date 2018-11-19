@@ -1,6 +1,12 @@
 #include "header.h"
 #include <time.h>
 
+/*
+set PATH=c:/MinGW/bin;%PATH%
+For compiling:
+gcc -Wall -o main main.c globals.c forward_funcs.c learn.c init_funcs.c backward_funcs.c
+*/
+
 int
 main(int argc, char *argv[]){
 	clock_t end, start;
@@ -13,6 +19,9 @@ main(int argc, char *argv[]){
 	
 	//Start timing
 	start = clock();
+	
+	//Before training print
+	print_network(net);
 	
 	//Learn
 	learn(net, data);

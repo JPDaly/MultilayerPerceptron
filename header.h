@@ -8,8 +8,9 @@
 #define TRUE 1
 #define FALSE 0
 #define INIT_N_CLASSES 20
-#define RAND_BIAS_MAX 20
-#define RAND_WEIGHT_MAX 10
+#define RAND_BIAS_MAX 1
+#define RAND_WEIGHT_MAX 1
+#define LEARNING_RATE 0.01
 
 typedef struct {
 	int n_layers;
@@ -47,6 +48,7 @@ data_t *init_data();
 FILE *get_file_location(data_t *data);
 void read_data(data_t *data, FILE *f);
 int unique_val(double *array, int length, double val);
+void normalise_data(FILE *f);
 
 //Feed forward functions
 void calc_output(network_t *net, double *input);
@@ -54,9 +56,10 @@ double calc_error(int length, double *output, double *desired_output);
 void read_batch(FILE *data_file, data_t *data, double **batch, int *points_read);
 
 //Back propagation
-void back_propagation(network_t *net, gradient_t *grad, double *output);
+void back_propagation(network_t *net, gradient_t *grad, double *output, int batch_example);
 double sig_derivative(double in);
 gradient_t *init_grad(network_t *net);
+void grad_descent(network_t *net, gradient_t *grad, int n_examples);
 
 //learn
 void learn(network_t *net, data_t *data);

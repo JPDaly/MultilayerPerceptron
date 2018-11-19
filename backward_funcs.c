@@ -1,7 +1,7 @@
 #include "header.h"
 
 void
-back_propagation(network_t *net, gradient_t *grad, double *output){
+back_propagation(network_t *net, gradient_t *grad, double *output, int batch_example){
 	int i,j,k;
 	
 	/*
@@ -23,7 +23,9 @@ back_propagation(network_t *net, gradient_t *grad, double *output){
 		for(j=0; j<net->neurons_per_layer[i]; j++) {
 			//activation gradients (actually just the derivative with respect to z)
 			if(i==net->n_layers-1) {
-				grad->activations[i][j] = 2*(net->activations[i][j] - output[j])*net->activations[i][j]*(1-net->activations[i][j]);
+				grad->activations[i][j] = 2.0*(net->activations[i][j] - output[j])*net->activations[i][j]*(1.0-net->activations[i][j]);
+				//printf("right? %f\n", 1.0-net->activations[i][j]);
+				grad->biases[i][j] = grad->activations[i][j];
 				continue;
 			} else if(i!=0) {
 				grad->activations[i][j] = 0;
@@ -31,20 +33,56 @@ back_propagation(network_t *net, gradient_t *grad, double *output){
 					grad->activations[i][j] += grad->activations[i+1][k]*net->weights[i][j][k];
 				}
 				grad->activations[i][j] /= (1.0*k);
+				grad->biases[i][j] = grad->activations[i][j];
 			}
-			
-			//biases (need this as well as the above because this will eventually take the average
-			grad->biases[i][j] += grad->activations[i][j];
 			
 			//weights
 			for(k=0; k<net->neurons_per_layer[i+1]; k++){
-				grad->weights[i][j][k] = grad->activations[i+1][k]*net->activations[i][j];
+				if(batch_example == 0){
+					grad->weights[i][j][k] = grad->activations[i+1][k]*net->activations[i][j];
+				} else {
+					grad->weights[i][j][k] += grad->activations[i+1][k]*net->activations[i][j];
+				}
+				
 			}
 		}
 	}
 	return;
 }
 
+
+void 
+grad_descent(network_t *net, gradient_t *grad, int n_examples){
+	int i,j,k;
+	
+	
+	//printf("\n\n----Weights----\n\n");
+	//update weights
+	for(k=0; k<net->n_layers-1; k++) {
+		for(i=0; i<net->neurons_per_layer[k]; i++) {
+			for(j=0; j<net->neurons_per_layer[k+1]; j++) {
+				//printf("%f\n", grad->weights[k][i][j]);
+				/*
+				Subtracting is definitely correct!! imagine a 2d graph where 
+					you want to minimise the function and see which way the x-axis goes as you add/subtract
+					the gradient from the x-axis
+				*/
+				net->weights[k][i][j] -= LEARNING_RATE*grad->weights[k][i][j]/n_examples;
+			}
+		}
+	}
+	
+	//printf("\n\n----Biases----\n\n");
+	for(i=0; i<net->n_layers; i++) {
+		for(j=0; j<net->neurons_per_layer[i]; j++) {
+			//printf("%f\n", grad->biases[i][j]);
+			//See above reasoning for subtraction
+			net->biases[i][j] -= LEARNING_RATE*grad->biases[i][j]/n_examples;
+		}
+	}
+	
+	return;
+}
 
 
 double 
@@ -103,7 +141,7 @@ gradient_t
 		exit(EXIT_FAILURE);
 	}
 	for(i=0; i<net->n_layers; i++) {
-		grad->activations[i] = (double*) calloc(sizeof(double), net->neurons_per_layer[i]);
+		grad->activations[i] = (double*) malloc(sizeof(double)*net->neurons_per_layer[i]);
 		if(grad->activations[i] == NULL) {
 			printf("Error #14 while allocating space.\n");
 			exit(EXIT_FAILURE);

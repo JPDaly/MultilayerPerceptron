@@ -29,7 +29,7 @@ network_t
 	
 	//set size of each layer
 	net->neurons_per_layer[0] = data->features;
-	output_binary = num_to_binary(data->n_classes-1);
+	output_binary = num_to_binary(data->n_classes);
 	//output layer only requires minimum amount of neurons required to make n_classes in binary
 	i=-1;
 	while(output_binary[++i] != -1);
@@ -75,7 +75,7 @@ init_weights(network_t *net){
 			}
 			//Give a random value to each weight
 			for(j=0; j<net->neurons_per_layer[k+1]; j++) {
-				net->weights[k][i][j] = rand()%RAND_WEIGHT_MAX + 1;
+				net->weights[k][i][j] = (rand()%10)/100.0 - 0.5;
 			}
 		}
 	}
@@ -108,7 +108,7 @@ init_biases(network_t *net){
 				net->biases[i][j] = 0;
 			} else {
 				//Otherwise give a random value
-				net->biases[i][j] = -(rand()%RAND_BIAS_MAX + 1);
+				net->biases[i][j] = -(rand()%10)/100.0;
 			}
 		}
 	}

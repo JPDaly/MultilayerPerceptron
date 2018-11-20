@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <float.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -26,6 +27,8 @@ typedef struct {
 	int features;
 	int batches;
 	int n_classes;
+	double max;
+	double min;
 	char *file_location;
 	double **batch;
 } data_t;
@@ -64,8 +67,15 @@ void grad_descent(network_t *net, gradient_t *grad, int n_examples);
 //learn
 void learn(network_t *net, data_t *data);
 
+//data manipulation
+void prepare_data(data_t *data);
+void normalise(double **file_content, double max, double min);
+
+
 //For all
 double sigmoid(double in);
 double *num_to_binary(int num);
 void print_network(network_t *net);
+
+
 

@@ -153,6 +153,8 @@ data_t
 	data->n_classes = 0;
 	data->features = 0;
 	data->data_size = 0;
+	data->max = -DBL_MAX
+	data->min = DBL_MAX
 	f = get_file_location(data);
 	read_data(data, f);
 	
@@ -223,7 +225,7 @@ read_data(data_t *data, FILE *f){
 		}
 	}
 	if(c == EOF && chars_in_line > features) data->data_size++;
-	
+
 	//Prompt the user to enter the batch size that will be used. (also recommends factors of the dataset size to use).
 	while(1) {
 		i=0;

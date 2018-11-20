@@ -149,18 +149,22 @@ data_t
 		exit(EXIT_FAILURE);
 	}
 	
-	//initialise to 0 for use later when setting the actual value
-	data->n_classes = 0;
-	data->features = 0;
-	data->data_size = 0;
-	data->max = -DBL_MAX
-	data->min = DBL_MAX
+	//initialise for use later when setting the actual value
+	data->max = -DBL_MAX;
+	data->min = DBL_MAX;
 	f = get_file_location(data);
-	read_data(data, f);
 	
 	//Get the number of possible classes that a point can be given
 	printf("How many classifications are there: ");
 	scanf("%d", &data->n_classes);
+	
+	printf("How many features are there per example: ");
+	scanf("%d", &data->features);
+	
+	printf("How many data points are there: ");
+	scanf("%d", &data->data_size);
+	
+	read_data(data, f);
 	
 	//Allocate space to the batch array which will contain subsets of the data
 	data->batch = (double**) malloc(sizeof(double*)*data->batch_size);
@@ -208,28 +212,29 @@ FILE
 //Gets important information needed for initialising the neural network from the data
 void
 read_data(data_t *data, FILE *f){
-	int chars_in_line=0, features=0, i;
+	int i, j;
 	char c;
+	double temp;
 	
-	//Count data points and number of features per point
-	while((c = getc(f)) != EOF) {
-		chars_in_line++;
-		if(c == '\n' && chars_in_line != 1) {
-			data->features = features;
-			data->data_size++;
-			chars_in_line = 0;
-		} else if(c == '\n' && chars_in_line == 1) {
-			break;
-		} else if(c == ',' && data->features == 0) {
-			features++;
+	for(i=0; i<data->data_size; i++) {
+		for(j=0; j<data->features; j++){
+			fscanf(f, "%lf", &temp);
+			if(temp > data->max) {
+				data->max = temp;
+			} 
+			if(temp < data->min) {
+				data->min = temp;
+			}
+			fgetc(f);
 		}
+		while((c = fgetc(f)) != '\n' && c != EOF);
 	}
-	if(c == EOF && chars_in_line > features) data->data_size++;
-
+	
+	
 	//Prompt the user to enter the batch size that will be used. (also recommends factors of the dataset size to use).
 	while(1) {
 		i=0;
-		printf("\nThe following are the factors of your dataset size (");
+		printf("The following are the factors of your dataset size (");
 		for(i=1; i<=data->data_size; i++) {
 			if(data->data_size%i == 0){
 				printf("%d", i);
@@ -239,7 +244,7 @@ read_data(data_t *data, FILE *f){
 		printf(")\nEnter batch size: ");
 		scanf("%d", &data->batch_size);
 		if(data->batch_size <= data->data_size && data->batch_size >= 1) break;
-		printf("\nThis is outside the range of possible values.\n\n");
+		printf("\nThis is outside  the range of possible values.\n\n");
 	}
 	data->batches = data->data_size/data->batch_size;
 	if(data->data_size%data->batch_size != 0) data->batches++;
@@ -255,3 +260,4 @@ unique_val(double *array, int length, double val){
 	}
 	return TRUE;
 }
+

@@ -17,6 +17,9 @@ main(int argc, char *argv[]){
 	data = init_data();
 	net = init_network(data);
 	
+	printf("%f", data->max);
+	printf("\n%f\n", data->min);
+
 	//Start timing
 	start = clock();
 	

@@ -1,5 +1,3 @@
-#define MAX_FILE_LOC_LENGTH 200
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -12,6 +10,7 @@
 #define RAND_BIAS_MAX 1
 #define RAND_WEIGHT_MAX 1
 #define LEARNING_RATE 0.01
+#define MAX_FILE_LOC_LENGTH 200
 
 typedef struct {
 	int n_layers;

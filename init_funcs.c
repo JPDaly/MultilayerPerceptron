@@ -29,7 +29,7 @@ network_t
 	
 	//set size of each layer
 	net->neurons_per_layer[0] = data->features;
-	output_binary = num_to_binary(data->n_classes);
+	output_binary = num_to_binary(data->n_classes, 0);
 	//output layer only requires minimum amount of neurons required to make n_classes in binary
 	i=-1;
 	while(output_binary[++i] != -1);

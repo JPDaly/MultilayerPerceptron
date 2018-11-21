@@ -2,9 +2,9 @@
 #include <time.h>
 
 /*
-set PATH=c:/MinGW/bin;%PATH%
+set PATH=c:/MinGW/bin;%PATH% 
 For compiling:
-gcc -Wall -o main main.c globals.c forward_funcs.c learn.c init_funcs.c backward_funcs.c
+gcc -Wall -o main main.c globals.c forward_funcs.c learn.c init_funcs.c backward_funcs.c data_manip.c 
 */
 
 int
@@ -16,10 +16,9 @@ main(int argc, char *argv[]){
 	//inititalising
 	data = init_data();
 	net = init_network(data);
+	prepare_data(data);
+ 
 	
-	printf("%f", data->max);
-	printf("\n%f\n", data->min);
-
 	//Start timing
 	start = clock();
 	
@@ -28,6 +27,9 @@ main(int argc, char *argv[]){
 	
 	//Learn
 	learn(net, data);
+	
+	//train
+	
 	
 	//Stop timing
 	end = clock();

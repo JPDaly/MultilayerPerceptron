@@ -23,7 +23,7 @@ learn(network_t *net, data_t *data){
 		}	
 	}
 	//Open data file
-	f = fopen(data->file_location, "r");
+	f = fopen("Resources/normalised_data.txt", "r");
 	if(f == NULL) {
 		printf("Couldn't open file.\n");
 		exit(EXIT_FAILURE);
@@ -38,8 +38,9 @@ learn(network_t *net, data_t *data){
 			//break early if last batch isn't a full size batch
 			if(batch[j][0] == -1.0) break;
 			//store the desired output for later
-			output = num_to_binary((int)(batch[j][data->features]));
+			output = num_to_binary((int)(batch[j][data->features]), net->neurons_per_layer[net->n_layers-1]);
 			//Calc output (just updates activations array)
+			printf("\n%f,%f -- %f,%f\n", net->activations[net->n_layers-1][0], net->activations[net->n_layers-1][1], output[0], output[1]);
 			calc_output(net, batch[j]);
 			//printf("calculated %f should be %f\n", net->activations[net->n_layers-1][0], output[0]);
 			//calculate error

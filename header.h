@@ -9,7 +9,7 @@
 #define INIT_N_CLASSES 20
 #define RAND_BIAS_MAX 1
 #define RAND_WEIGHT_MAX 1
-#define LEARNING_RATE 0.01
+#define LEARNING_RATE 1
 #define MAX_FILE_LOC_LENGTH 200
 
 typedef struct {
@@ -73,7 +73,7 @@ void normalise(double **file_content, double max, double min);
 
 //For all
 double sigmoid(double in);
-double *num_to_binary(int num);
+double *num_to_binary(int num, int max_digits);
 void print_network(network_t *net);
 
 

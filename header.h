@@ -39,8 +39,6 @@ typedef struct {
 }gradient_t;
 
 
-
-
 //Initial functions
 network_t *init_network(data_t *data);
 void init_weights(network_t *net);
@@ -63,13 +61,12 @@ double sig_derivative(double in);
 gradient_t *init_grad(network_t *net);
 void grad_descent(network_t *net, gradient_t *grad, int n_examples);
 
-//learn
+//learn (calls forward and back functions)
 void learn(network_t *net, data_t *data);
 
 //data manipulation
 void prepare_data(data_t *data);
 void normalise(double **file_content, double max, double min);
-
 
 //For all
 double sigmoid(double in);

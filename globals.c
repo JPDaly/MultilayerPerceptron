@@ -6,7 +6,6 @@ sigmoid(double in){
 	return 1.0/(1.0 + exp(-in));
 }
 
-
 //Returns the binary of num (a base 10 integer) in a int array.
 double
 *num_to_binary(int num, int max_digits) {

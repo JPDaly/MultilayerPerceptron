@@ -2,7 +2,7 @@
 
 void
 learn(network_t *net, data_t *data){
-	int i,j, points_read=0;
+	int i,j,k, points_read=0;
 	double **batch, error, *output;
 	gradient_t *grad;
 	FILE *f;
@@ -40,7 +40,18 @@ learn(network_t *net, data_t *data){
 			//store the desired output for later
 			output = num_to_binary((int)(batch[j][data->features]), net->neurons_per_layer[net->n_layers-1]);
 			//Calc output (just updates activations array)
-			printf("\n%f,%f -- %f,%f\n", net->activations[net->n_layers-1][0], net->activations[net->n_layers-1][1], output[0], output[1]);
+			if(points_read >= 9500) {
+				printf("\n");
+				for(k=0; k<4; k++){
+					printf("%f,", net->activations[net->n_layers-1][k]);
+				}
+				printf("----");
+				for(k=0; k<4; k++){
+					printf("%f,", output[k]);
+				}
+				printf("\n");
+			}
+			
 			calc_output(net, batch[j]);
 			//printf("calculated %f should be %f\n", net->activations[net->n_layers-1][0], output[0]);
 			//calculate error

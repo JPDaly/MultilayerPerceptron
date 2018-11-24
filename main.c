@@ -23,7 +23,7 @@ main(int argc, char *argv[]){
 	start = clock();
 	
 	//Before training print
-	print_network(net);
+	//print_network(net);
 	
 	//Learn
 	learn(net, data);
@@ -35,7 +35,7 @@ main(int argc, char *argv[]){
 	end = clock();
 
 	//Print values in network
-	print_network(net);
+	//print_network(net);
 	
 	//Print runtime
 	printf("\n------ Runtime = %.3f seconds ------\n", (double)(end - start) / CLOCKS_PER_SEC);

@@ -10,7 +10,8 @@ For that reason I chose to do this in this function rather than in the read_data
 void 
 prepare_data(data_t *data){
 	int i,j;
-	double temp;
+	char c;
+	double temp, label;
 	FILE *f, *output_f;
 	
 	f = fopen(data->file_location, "r");
@@ -28,16 +29,18 @@ prepare_data(data_t *data){
 	
 	//Normalisation
 	for(i=0; i<data->data_size; i++) {
-		for(j=0; j<data->features+1; j++) {
-			fscanf(f, "%lf", &temp);
-			if(j == data->features) {
-				fprintf(output_f,"%f", temp); //Just print the desired output as it is
-			} else {
-				fprintf(output_f,"%f", ((temp-data->min)/(data->max - data->min)) - 0.5); //normalising
-			}			
-			fprintf(output_f,"%c", fgetc(f));
-		}
-	}
+		for(j=0; j<data->features+1; j++) { 
+			fscanf(f, "%lf", &temp); 
+			if(j == 0) { 
+				label = temp; 
+			} else { 
+				fprintf(output_f,"%f", ((temp-data->min)/(data->max - data->min)) - 0.5); //normalising 
+			} 
+			c = fgetc(f);
+			if(j!=data->features && j != 0) fprintf(output_f,"%c", c); 
+		} 
+		fprintf(output_f,",%f\n", label); 
+	} 
 	
 	fclose(f);
 	fclose(output_f);

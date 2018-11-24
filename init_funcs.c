@@ -75,7 +75,7 @@ init_weights(network_t *net){
 			}
 			//Give a random value to each weight
 			for(j=0; j<net->neurons_per_layer[k+1]; j++) {
-				net->weights[k][i][j] = (rand()%10)/100.0 - 0.5;
+				net->weights[k][i][j] = (rand()%100)/100.0 - 0.5;
 			}
 		}
 	}
@@ -108,7 +108,7 @@ init_biases(network_t *net){
 				net->biases[i][j] = 0;
 			} else {
 				//Otherwise give a random value
-				net->biases[i][j] = -(rand()%10)/100.0;
+				net->biases[i][j] = -(rand()%100)/100.0 - 0.5;
 			}
 		}
 	}

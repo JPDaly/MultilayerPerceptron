@@ -1,0 +1,17 @@
+Scale down the problem to manageable size. I first tried too many inputs, with too many hidden layer units. 
+Once I scaled down the problem, I could see if the solution to the smaller problem was working.
+This also works because when it's scaled down, the times to compute the weights drop down significantly, 
+	so I can try many different things without waiting.
+
+Make sure you have enough hidden units. This was a major problem for me. 
+I had about 900 inputs connecting to ~10 units in the hidden layer. 
+This was way too small to quickly converge. But also became very slow if I added additional units. 
+Scaling down the number of inputs helped a lot.
+
+Change the activation function and its parameters. I was using tanh at first. 
+I tried other functions: sigmoid, normalized sigmoid, Gaussian, etc.. 
+I also found that changing the function parameters to make the functions steeper or shallower affected how quickly 
+	the network converged.
+
+Change learning algorithm parameters. Try different learning rates (0.01 to 0.9). 
+Also try different momentum parameters, if your algo supports it (0.1 to 0.9).

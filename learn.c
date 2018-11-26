@@ -8,7 +8,6 @@ learn(network_t *net, data_t *data){
 	FILE *f;
 	
 	grad = init_grad(net);
-	
 	//Make 2D array based on size of decided batches (+1 so that end of batch value can be used)
 	batch = malloc(sizeof(double*)*(data->batch_size+1));
 	if(batch == NULL) {
@@ -39,20 +38,15 @@ learn(network_t *net, data_t *data){
 			if(batch[j][0] == -1.0) break;
 			//store the desired output for later
 			output = num_to_binary((int)(batch[j][data->features]), net->neurons_per_layer[net->n_layers-1]);
-			//Calc output (just updates activations array)
-			if(points_read >= 9500) {
-				printf("\n");
-				for(k=0; k<4; k++){
-					printf("%f,", net->activations[net->n_layers-1][k]);
-				}
-				printf("----");
-				for(k=0; k<4; k++){
-					printf("%f,", output[k]);
-				}
-				printf("\n");
-			}
 			
+			//Calc output (just updates activations array)
 			calc_output(net, batch[j]);
+			k=0;
+			while(output[k] != -1){
+				printf("%f,", output[k]);
+				printf("%f-", net->activations[net->n_layers-1][k++]);
+			}
+			printf("\n");
 			//printf("calculated %f should be %f\n", net->activations[net->n_layers-1][0], output[0]);
 			//calculate error
 			error += calc_error(net->neurons_per_layer[net->n_layers-1], net->activations[net->n_layers-1], output);

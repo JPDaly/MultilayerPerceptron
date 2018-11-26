@@ -10,15 +10,15 @@ calc_output(network_t *net, double *input){
 	for(i=0; i<net->neurons_per_layer[0]; i++) {
 		net->activations[0][i] = input[i];
 	}
-	
+
 	//This implements Sigmoid(Sum(w*x) + b) but I need to make sure this is the correct formula
 	for(k=0; k<net->n_layers-1; k++) {
-		for(i=0; i<net->neurons_per_layer[k+1]; i++) {
-			net->activations[k+1][i] = net->biases[k+1][i];
-			for(j=0; j<net->neurons_per_layer[k]; j++) {
-				net->activations[k+1][i] += net->weights[k][j][i]*net->activations[k][j];
+		for(j=0; j<net->neurons_per_layer[k+1]; j++) {
+			net->activations[k+1][j] = net->biases[k+1][j];
+			for(i=0; i<net->neurons_per_layer[k]; i++) {
+				net->activations[k+1][j] += net->weights[k][j][i]*net->activations[k][i];
 			}
-			net->activations[k+1][i] = sigmoid(net->activations[k+1][i]);
+			net->activations[k+1][j] = sigmoid(net->activations[k+1][j]);
 		}
 	}
 	return;

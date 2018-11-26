@@ -16,7 +16,9 @@ main(int argc, char *argv[]){
 	//inititalising
 	data = init_data();
 	net = init_network(data);
+	printf("\n\nNormalising data.\n");
 	prepare_data(data);
+	printf("Finished\n");
  
 	
 	//Start timing
@@ -26,8 +28,9 @@ main(int argc, char *argv[]){
 	//print_network(net);
 	
 	//Learn
+	printf("\nBegin learning\n");
 	learn(net, data);
-	
+	printf("Finished\n");
 	//train
 	
 	
@@ -39,7 +42,6 @@ main(int argc, char *argv[]){
 	
 	//Print runtime
 	printf("\n------ Runtime = %.3f seconds ------\n", (double)(end - start) / CLOCKS_PER_SEC);
-	printf("C:\\Users\\JordanDaly\\Documents\\Programming\\MultilayerPerceptron\\Resources\\data.txt\n");
 	
 	return 0;
 }

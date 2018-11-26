@@ -62,20 +62,20 @@ init_weights(network_t *net){
 		exit(EXIT_FAILURE);
 	}
 	for(k=0; k<net->n_layers-1; k++) {
-		net->weights[k] = (double**) malloc(sizeof(double*)*net->neurons_per_layer[k]);
+		net->weights[k] = (double**) malloc(sizeof(double*)*net->neurons_per_layer[k+1]);
 		if(net->weights[k] == NULL) {
 			printf("Error #9 while allocating space.\n");
 			exit(EXIT_FAILURE);
 		}
-		for(i=0; i<net->neurons_per_layer[k]; i++) {
-			net->weights[k][i] = (double*) malloc(sizeof(double)*net->neurons_per_layer[k+1]);
+		for(i=0; i<net->neurons_per_layer[k+1]; i++) {
+			net->weights[k][i] = (double*) malloc(sizeof(double)*net->neurons_per_layer[k]);
 			if(net->weights[k][i] == NULL) {
 				printf("Error #10 while allocating space.\n");
 				exit(EXIT_FAILURE);
 			}
 			//Give a random value to each weight
-			for(j=0; j<net->neurons_per_layer[k+1]; j++) {
-				net->weights[k][i][j] = (rand()%100)/100.0 - 0.5;
+			for(j=0; j<net->neurons_per_layer[k]; j++) {
+				net->weights[k][i][j] = (rand()%100)/10.0 - 0.5;
 			}
 		}
 	}

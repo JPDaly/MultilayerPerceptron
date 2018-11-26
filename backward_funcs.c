@@ -4,49 +4,25 @@ void
 back_propagation(network_t *net, gradient_t *grad, double *output, int batch_example){
 	int i,j,k;
 	
-	/*
-	loop through each layer except input layer
-		loop through current layer's activations
-			determine gradient dC/dz 
-				the equation used depends on whether this is the output layer or not
-				if not output layer use previous layer in calculation
-				otherwise use 2*(a-y)
-		(use above value for the following calculations)
-		loop through all weights in that connect the current layer
-			calculate gradient for weights
-		loop through each bias for this layer 
-			calculate gradients for biases
-		
-	*/
-	
-	for(i=net->n_layers-1; i>=0; i--) {
-		for(j=0; j<net->neurons_per_layer[i]; j++) {
-			//activation gradients (actually just the derivative with respect to z)
-			if(i==net->n_layers-1) {
-				grad->activations[i][j] = 2.0*(net->activations[i][j] - output[j])*net->activations[i][j]*(1.0-net->activations[i][j]);
-				//printf("right? %f\n", 1.0-net->activations[i][j]);
-				grad->biases[i][j] = grad->activations[i][j];
+	for(k=net->n_layers-1; k<=0; k++) {
+		for(i=0; i<net->neurons_per_layer[k]; i++) {
+			if(k == net->n_layers-1) {
+				grad->biases[k][i] = 2*(net->biases[k][i] - output[i])*net->activations[k][i]*(1-net->activations[k][i]);
 				continue;
-			} else if(i!=0) {
-				grad->activations[i][j] = 0;
-				for(k=0; k<net->neurons_per_layer[i+1]; k++){
-					grad->activations[i][j] += grad->activations[i+1][k]*net->weights[i][j][k];
-				}
-				grad->activations[i][j] /= (1.0*k);
-				grad->biases[i][j] = grad->activations[i][j];
-			}
-			
-			//weights
-			for(k=0; k<net->neurons_per_layer[i+1]; k++){
+			} 
+			if(batch_example==0) grad->biases[k][i] = 0;
+			for(j=0; j<net->neurons_per_layer[k+1]; j++){
+				grad->biases[k][i] += net->activations[k+1][j]*(1-net->activations[k+1][j])*net->weights[k][j][i]; 
 				if(batch_example == 0){
-					grad->weights[i][j][k] = grad->activations[i+1][k]*net->activations[i][j];
+					grad->weights[k][j][i] = grad->biases[k+1][j]*net->activations[k][i];	
 				} else {
-					grad->weights[i][j][k] += grad->activations[i+1][k]*net->activations[i][j];
+					grad->weights[k][j][i] += grad->biases[k+1][j]*net->activations[k][i];
 				}
 				
 			}
 		}
 	}
+
 	return;
 }
 
@@ -59,25 +35,25 @@ grad_descent(network_t *net, gradient_t *grad, int n_examples){
 	//printf("\n\n----Weights----\n\n");
 	//update weights
 	for(k=0; k<net->n_layers-1; k++) {
-		for(i=0; i<net->neurons_per_layer[k]; i++) {
-			for(j=0; j<net->neurons_per_layer[k+1]; j++) {
+		for(i=0; i<net->neurons_per_layer[k+1]; i++) {
+			for(j=0; j<net->neurons_per_layer[k]; j++) {
 				//printf("%f\n", grad->weights[k][i][j]);
 				/*
 				Subtracting is definitely correct!! imagine a 2d graph where 
 					you want to minimise the function and see which way the x-axis goes as you add/subtract
 					the gradient from the x-axis
 				*/
-				net->weights[k][i][j] -= LEARNING_RATE*grad->weights[k][i][j]/n_examples;
+				net->weights[k][i][j] += LEARNING_RATE*grad->weights[k][i][j]/n_examples;
 			}
 		}
 	}
 	
 	//printf("\n\n----Biases----\n\n");
-	for(i=0; i<net->n_layers; i++) {
+	for(i=1; i<net->n_layers; i++) {
 		for(j=0; j<net->neurons_per_layer[i]; j++) {
 			//printf("%f\n", grad->biases[i][j]);
 			//See above reasoning for subtraction
-			net->biases[i][j] -= LEARNING_RATE*grad->biases[i][j]/n_examples;
+			net->biases[i][j] += LEARNING_RATE*grad->biases[i][j]/n_examples;
 		}
 	}
 	
@@ -108,13 +84,13 @@ gradient_t
 		exit(EXIT_FAILURE);
 	}
 	for(j=0; j<net->n_layers-1; j++) {
-		grad->weights[j] = (double**) malloc(sizeof(double*)*net->neurons_per_layer[j]);
+		grad->weights[j] = (double**) malloc(sizeof(double*)*net->neurons_per_layer[j+1]);
 		if(grad->weights[j] == NULL) {
 			printf("Error grad_weights 1 while allocating space.\n");
 			exit(EXIT_FAILURE);
 		}
-		for(i=0; i<net->neurons_per_layer[j]; i++) {
-			grad->weights[j][i] = (double*) calloc(sizeof(double),net->neurons_per_layer[j+1]);
+		for(i=0; i<net->neurons_per_layer[j+1]; i++) {
+			grad->weights[j][i] = (double*) calloc(sizeof(double),net->neurons_per_layer[j]);
 			if(grad->weights[j][i] == NULL) {
 				printf("Error grad_weights 2 while allocating space.\n");
 				exit(EXIT_FAILURE);

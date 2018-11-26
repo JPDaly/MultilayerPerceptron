@@ -9,7 +9,7 @@
 #define INIT_N_CLASSES 20
 #define RAND_BIAS_MAX 1
 #define RAND_WEIGHT_MAX 1
-#define LEARNING_RATE 1
+#define LEARNING_RATE 0.1
 #define MAX_FILE_LOC_LENGTH 200
 
 typedef struct {

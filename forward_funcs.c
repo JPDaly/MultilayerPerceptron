@@ -17,8 +17,10 @@ calc_output(network_t *net, double *input){
 			net->activations[k+1][j] = net->biases[k+1][j];
 			for(i=0; i<net->neurons_per_layer[k]; i++) {
 				net->activations[k+1][j] += net->weights[k][j][i]*net->activations[k][i];
+				//printf("%f\n", net->activations[k+1][j]);
 			}
 			net->activations[k+1][j] = sigmoid(net->activations[k+1][j]);
+			//if(k==1) printf("%f\n", net->activations[k+1][j]);
 		}
 	}
 	return;

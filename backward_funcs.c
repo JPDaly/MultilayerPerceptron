@@ -4,24 +4,28 @@ void
 back_propagation(network_t *net, gradient_t *grad, double *output, int batch_example){
 	int i,j,k;
 	
-	for(k=net->n_layers-1; k<=0; k++) {
+	//printf("	Start1\n");
+	for(i=0; i<net->neurons_per_layer[net->n_layers-1]; i++) {
+		grad->biases[net->n_layers-1][i] = 2*(net->activations[net->n_layers-1][i] - output[i])*net->activations[net->n_layers-1][i]*(1-net->activations[net->n_layers-1][i]);
+	}
+	//printf("	end1\n");
+	
+	//printf("	Start2\n");
+	for(k=net->n_layers-2; k>=0; k--) {
 		for(i=0; i<net->neurons_per_layer[k]; i++) {
-			if(k == net->n_layers-1) {
-				grad->biases[k][i] = 2*(net->biases[k][i] - output[i])*net->activations[k][i]*(1-net->activations[k][i]);
-				continue;
-			} 
 			if(batch_example==0) grad->biases[k][i] = 0;
 			for(j=0; j<net->neurons_per_layer[k+1]; j++){
 				grad->biases[k][i] += net->activations[k+1][j]*(1-net->activations[k+1][j])*net->weights[k][j][i]; 
+				//printf("	%f\n", net->activations[k][i]);
 				if(batch_example == 0){
 					grad->weights[k][j][i] = grad->biases[k+1][j]*net->activations[k][i];	
 				} else {
 					grad->weights[k][j][i] += grad->biases[k+1][j]*net->activations[k][i];
 				}
-				
 			}
 		}
 	}
+	//printf("	end2\n");
 
 	return;
 }
@@ -31,29 +35,32 @@ void
 grad_descent(network_t *net, gradient_t *grad, int n_examples){
 	int i,j,k;
 	
-	
 	//printf("\n\n----Weights----\n\n");
 	//update weights
+	//printf("here1\n");
 	for(k=0; k<net->n_layers-1; k++) {
+		//printf("here2\n");
 		for(i=0; i<net->neurons_per_layer[k+1]; i++) {
+			//printf("here3\n");
 			for(j=0; j<net->neurons_per_layer[k]; j++) {
+				//printf("here4\n");
 				//printf("%f\n", grad->weights[k][i][j]);
 				/*
 				Subtracting is definitely correct!! imagine a 2d graph where 
 					you want to minimise the function and see which way the x-axis goes as you add/subtract
 					the gradient from the x-axis
 				*/
-				net->weights[k][i][j] += LEARNING_RATE*grad->weights[k][i][j]/n_examples;
+				//printf("%f\n", net->weights[k][i][j]);
+				net->weights[k][i][j] -= LEARNING_RATE*grad->weights[k][i][j]/(1.0*n_examples);
+				//printf("	%f\n", net->weights[k][i][j]);
+				//printf("	%f\n", grad->biases[k][j]);
 			}
 		}
 	}
 	
-	//printf("\n\n----Biases----\n\n");
-	for(i=1; i<net->n_layers; i++) {
-		for(j=0; j<net->neurons_per_layer[i]; j++) {
-			//printf("%f\n", grad->biases[i][j]);
-			//See above reasoning for subtraction
-			net->biases[i][j] += LEARNING_RATE*grad->biases[i][j]/n_examples;
+	for(k=1; k<=net->n_layers-1; k++) {
+		for(j=0; j<net->neurons_per_layer[k]; j++) {
+			net->biases[k][j] -= LEARNING_RATE*grad->biases[k][j]/(1.0*n_examples);
 		}
 	}
 	

@@ -5,6 +5,41 @@
 set PATH=c:/MinGW/bin;%PATH% 
 For compiling:
 gcc -Wall -o main main.c globals.c forward_funcs.c learn.c init_funcs.c backward_funcs.c data_manip.c 
+resources\mnist_test.csv
+10
+784
+10000
+5
+1
+500
+
+resources\mnist.csv
+10
+784
+10000
+10
+2
+500
+500
+
+resources/mnist.txt
+10
+784
+10000
+10
+2
+5000
+5000
+
+resources\data.txt
+8
+3
+1000
+1
+1
+5
+
+
 */
 
 int
@@ -15,11 +50,10 @@ main(int argc, char *argv[]){
 	
 	//inititalising
 	data = init_data();
-	net = init_network(data);
+	net = init_network(data, argv);
 	printf("\n\nNormalising data.\n");
 	prepare_data(data);
 	printf("Finished\n");
- 
 	
 	//Start timing
 	start = clock();

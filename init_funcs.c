@@ -2,7 +2,7 @@
 
 //Initialise the network_t by allocating appropriate space
 network_t
-*init_network(data_t *data){
+*init_network(data_t *data, char *argv[]){
 	int i;
 	double *output_binary;
 	network_t *net;
@@ -41,8 +41,8 @@ network_t
 		scanf("%d", &net->neurons_per_layer[i]);
 	}
 	
-	init_weights(net);
-	init_biases(net);
+	init_weights(net, argv);
+	init_biases(net, argv);
 	init_activations(net);
 
 	return net;
@@ -50,10 +50,10 @@ network_t
 
 //Allocate space for the weights array based on sizes of layers
 void 
-init_weights(network_t *net){
+init_weights(network_t *net, char *argv[]){
 	int i, j, k;
 	//Using 0 every time so that the result can be replicated (but obviously it could base this off time if it turns out that's what is needed)
-	srand(0);
+	srand((int)(argv[1][0] - '0'));
 	
 	//all of the following is allocating space and checking if it worked
 	net->weights = (double***) malloc(sizeof(double**)*net->n_layers-1);
@@ -75,7 +75,7 @@ init_weights(network_t *net){
 			}
 			//Give a random value to each weight
 			for(j=0; j<net->neurons_per_layer[k]; j++) {
-				net->weights[k][i][j] = (rand()%100)/10.0 - 0.5;
+				net->weights[k][i][j] = (rand()%100)/100000.0 ;//- 0.5;
 			}
 		}
 	}
@@ -84,11 +84,11 @@ init_weights(network_t *net){
 
 //Allocate space for the biases array based on sizes of layers
 void 
-init_biases(network_t *net){
+init_biases(network_t *net, char *argv[]){
 	int i,j;
 	
 	//Using 1 just so that the biases don't have the same values as the weights (for no real reason other than that)
-	srand(1);
+	srand((int)(argv[2][0] - '0'));
 	
 	//All of the below is allocating space and checking if it worked
 	net->biases = (double**) malloc(sizeof(double*)*net->n_layers);
@@ -108,7 +108,7 @@ init_biases(network_t *net){
 				net->biases[i][j] = 0;
 			} else {
 				//Otherwise give a random value
-				net->biases[i][j] = -(rand()%100)/100.0 - 0.5;
+				net->biases[i][j] = (rand()%100)/100.0 - 0.5;
 			}
 		}
 	}
@@ -213,21 +213,20 @@ FILE
 void
 read_data(data_t *data, FILE *f){
 	int i, j;
-	char c;
 	double temp;
 	
 	for(i=0; i<data->data_size; i++) {
-		for(j=0; j<data->features; j++){
+		for(j=0; j<data->features+1; j++){
 			fscanf(f, "%lf", &temp);
+			fgetc(f);
+			if(j==0) continue;
 			if(temp > data->max) {
 				data->max = temp;
-			} 
+			}
 			if(temp < data->min) {
 				data->min = temp;
 			}
-			fgetc(f);
 		}
-		while((c = fgetc(f)) != '\n' && c != EOF);
 	}
 	
 	

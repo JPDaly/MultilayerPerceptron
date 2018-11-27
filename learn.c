@@ -30,33 +30,35 @@ learn(network_t *net, data_t *data){
 	//iterate through getting one batch at a time
 	for(i=0; i<data->batches; i++){
 		error=0.0;
-		//get batch
 		read_batch(f, data, batch, &points_read);
-		//iterate through points in batch
+		//printf("New j\n");
 		for(j=0; j<data->batch_size; j++){
 			//break early if last batch isn't a full size batch
 			if(batch[j][0] == -1.0) break;
-			//store the desired output for later
+			//printf("output start\n");
 			output = num_to_binary((int)(batch[j][data->features]), net->neurons_per_layer[net->n_layers-1]);
-			
-			//Calc output (just updates activations array)
+			//printf("output end\n");
+			//printf("calc start\n");
 			calc_output(net, batch[j]);
+			//printf("calc end\n");
+			//printf("start\n");
+			error += calc_error(net->neurons_per_layer[net->n_layers-1], net->activations[net->n_layers-1], output);
+			//printf("end\n");
+			//printf("start1\n");
+			back_propagation(net, grad, output, j);
+			//printf("end1\n");
+		}
+		grad_descent(net, grad, j);
+		error /= j; 
+		printf("Error for batch #%d = %f\n", i, error);
+		if(1) {
 			k=0;
 			while(output[k] != -1){
 				printf("%f,", output[k]);
 				printf("%f-", net->activations[net->n_layers-1][k++]);
 			}
 			printf("\n");
-			//printf("calculated %f should be %f\n", net->activations[net->n_layers-1][0], output[0]);
-			//calculate error
-			error += calc_error(net->neurons_per_layer[net->n_layers-1], net->activations[net->n_layers-1], output);
-			back_propagation(net, grad, output, j);
 		}
-		
-		//take grads off values
-		grad_descent(net, grad, j);
-		error /= j; //average of error
-		printf("Error for batch #%d = %f\n", i, error);
 	}
 	
 	fclose(f);

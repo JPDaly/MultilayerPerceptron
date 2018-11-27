@@ -33,9 +33,9 @@ prepare_data(data_t *data){
 			fscanf(f, "%lf", &temp); 
 			if(j == 0) { 
 				label = temp; 
-			} else { 
-				fprintf(output_f,"%f", ((temp-data->min)/(data->max - data->min)) - 0.5); //normalising 
-			} 
+			} else {
+				fprintf(output_f,"%f", (((temp-data->min)/(data->max - data->min)) - 0.5)); //normalising 
+			}
 			c = fgetc(f);
 			if(j!=data->features && j != 0) fprintf(output_f,"%c", c); 
 		} 

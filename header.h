@@ -9,7 +9,7 @@
 #define INIT_N_CLASSES 20
 #define RAND_BIAS_MAX 1
 #define RAND_WEIGHT_MAX 1
-#define LEARNING_RATE 0.1
+#define LEARNING_RATE 0.01
 #define MAX_FILE_LOC_LENGTH 200
 
 typedef struct {
@@ -40,9 +40,9 @@ typedef struct {
 
 
 //Initial functions
-network_t *init_network(data_t *data);
-void init_weights(network_t *net);
-void init_biases(network_t *net);
+network_t *init_network(data_t *data, char *argv[]);
+void init_weights(network_t *net, char *argv[]);
+void init_biases(network_t *net, char *argv[]);
 void init_activations(network_t *net);
 data_t *init_data();
 FILE *get_file_location(data_t *data);
